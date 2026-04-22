@@ -19,31 +19,34 @@ body {
     max-width: 1440px; /* 도면과 동일한 최대 가로폭 */
 }
 
-/* 1단계: 상단 프로필 관제 패널 */
+/* 1. 프로필 관제 패널 정렬 수정 */
 .profile-panel {
     background-color: #2B2D36;
     border-radius: 12px;
-    padding: 40px 50px; /* 좌우 여백을 조금 더 주어 안정감 부여 */
+    padding: 40px 50px;
     margin-bottom: 50px;
     border: 1px solid #3f414d;
-    display: flex; /* grid 대신 flex 사용 */
-    align-items: center; /* 사진과 텍스트를 수직 정중앙에 배치 (가장 중요!) */
-    gap: 40px; /* 사진과 텍스트 사이의 간격 */
+    display: flex;
+    align-items: flex-start; /* 중앙(center) 대신 위쪽(flex-start)으로 기준선 변경 */
+    gap: 35px; /* 사진과 텍스트 사이의 간격 최적화 */
     position: relative;
 }
 
-/* 프로필 텍스트 영역이 남은 공간을 꽉 채우도록 수정 */
-.profile-text {
-    flex: 1;
+/* 2. 프로필 사진 틀 완벽 고정 */
+.profile-pic-container {
+    width: 110px; /* 공간에 꽉 차도록 크기 살짝 증폭 */
+    height: 110px;
+    flex-shrink: 0; /* ★중요: 화면이 좁아져도 원형이 찌그러지지 않도록 절대 방어 */
+    border-radius: 50%;
+    overflow: hidden;
+    margin-top: 5px; /* 타이틀(Jokers Data Labs) 높이와 자연스럽게 맞추기 */
+    background-color: #1a1b21; /* 이미지가 뜨기 전까지 더 어둡고 깊은 색으로 대기 */
+    border: 2px solid #3f414d; /* 겉면에 얇은 테두리를 둘러서 기계적인 느낌 추가 */
 }
 
-/* 프로필 사진 박스 */
-.profile-pic-container {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    overflow: hidden; /* 원형으로 자르기 */
-    background-color: #ccc; /* 사진 없을 때 임시 색상 */
+/* 3. 텍스트 영역 남은 공간 확보 */
+.profile-text {
+    flex: 1;
 }
 
 .profile-pic-container {
