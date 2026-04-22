@@ -36,10 +36,12 @@ body {
     background-color: #ccc; /* 사진 없을 때 임시 색상 */
 }
 
-.profile-pic {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.profile-pic-container {
+    width: 80px; /* 타이틀 크기 정도로 축소 (예: 60px~100px 권장, 지휘관 취향껏 조절) */
+    height: 80px; /* 정사각 유지 (매우 중요!) */
+    border-radius: 50%; /* 원형 유지 */
+    overflow: hidden; /* 원형으로 자르기 */
+    background-color: transparent; /* 사진 등록되었으니 배경 투명하게 (선택 사항) */
 }
 
 /* 프로필 텍스트 영역 */
