@@ -49,20 +49,6 @@ body {
     flex: 1;
 }
 
-.profile-pic-container {
-    width: 80px; /* 타이틀 크기 정도로 축소 (예: 60px~100px 권장, 지휘관 취향껏 조절) */
-    height: 80px; /* 정사각 유지 (매우 중요!) */
-    border-radius: 50%; /* 원형 유지 */
-    overflow: hidden; /* 원형으로 자르기 */
-    background-color: transparent; /* 사진 등록되었으니 배경 투명하게 (선택 사항) */
-}
-
-/* 프로필 텍스트 영역 */
-.profile-text h1 {
-    margin-top: 0;
-    font-size: 32px;
-}
-
 /* 🟢 상태 표시등 (형광 초록) */
 .status-dot {
     color: #32D74B;
