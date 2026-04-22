@@ -37,8 +37,8 @@ body {
     width: 110px; /* 공간에 꽉 차도록 크기 살짝 증폭 */
     height: 110px;
     flex-shrink: 0; /* ★중요: 화면이 좁아져도 원형이 찌그러지지 않도록 절대 방어 */
-    border-radius: 50%;
-    overflow: hidden;
+    border-radius: 0%;
+    /*overflow: hidden;*/
     margin-top: 5px; /* 타이틀(Jokers Data Labs) 높이와 자연스럽게 맞추기 */
     background-color: #1a1b21; /* 이미지가 뜨기 전까지 더 어둡고 깊은 색으로 대기 */
     border: 2px solid #3f414d; /* 겉면에 얇은 테두리를 둘러서 기계적인 느낌 추가 */
