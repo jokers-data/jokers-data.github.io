@@ -1,142 +1,166 @@
 // app.js
 
-// 1. 관제탑 요소들 레이더 포착
-const cards = document.querySelectorAll('.card');
-const searchInput = document.querySelector('.search-input'); // 검색창 포착
+// 1. 뷰 스위치 요소
+const viewMain = document.getElementById('main-view');
+const viewDetail = document.getElementById('detail-view');
+
+// 2. 모달 및 입력 요소
 const modal = document.getElementById('post-modal');
 const modalCategory = document.getElementById('modal-category');
 const postTitle = document.getElementById('post-title');
 const postContent = document.getElementById('post-content');
-const readContent = document.getElementById('read-content');
-
-const btnClose = document.getElementById('btn-close');
 const btnSave = document.getElementById('btn-save');
-const btnEdit = document.getElementById('btn-edit');     // 수정 버튼
-const btnDelete = document.getElementById('btn-delete'); // 삭제 버튼
+const btnClose = document.getElementById('btn-close');
 
+// 3. 상세 뷰 요소
+const detailCategory = document.getElementById('detail-category');
+const detailTitle = document.getElementById('detail-title');
+const detailDate = document.getElementById('detail-date');
+const detailBody = document.getElementById('detail-body');
+const btnBackMain = document.getElementById('btn-back-main');
+const btnPrevPost = document.getElementById('btn-prev-post');
+const btnNextPost = document.getElementById('btn-next-post');
+const btnDetailEdit = document.getElementById('btn-detail-edit');
+const btnDetailDelete = document.getElementById('btn-detail-delete');
+
+// 전역 상태 관리 변수
 let currentCategory = ''; 
+let currentPostIndex = -1; // 현재 보고 있는 글의 배열 내 위치
+let isEditMode = false; // 새글 작성인지 수정인지 구분
 
-// 🎯 신규 무기 1: 실시간 검색 레이더 (Search)
-searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase(); // 입력한 글자를 소문자로 변환
+// --- [코어 함수] 로컬 스토리지에서 데이터 불러오기 (배열 형태) ---
+function getPosts(category) {
+    const data = localStorage.getItem('jokers_posts_' + category);
+    return data ? JSON.parse(data) : [];
+}
+
+// --- [코어 함수] 로컬 스토리지에 데이터 저장하기 ---
+function savePosts(category, postsArray) {
+    localStorage.setItem('jokers_posts_' + category, JSON.stringify(postsArray));
+}
+
+// --- [뷰 함수] 메인 화면의 카드 리스트 렌더링 ---
+function renderDashboard() {
+    const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
-        const title = card.querySelector('h3').innerText.toLowerCase();
-        // 카드의 제목이 검색어를 포함하고 있으면 보여주고, 아니면 숨김 처리
-        if (title.includes(searchTerm)) {
-            card.style.display = 'block'; 
-        } else {
-            card.style.display = 'none';  
-        }
+        const category = card.getAttribute('data-category');
+        const ul = card.querySelector('.post-list');
+        const posts = getPosts(category);
+        
+        ul.innerHTML = ''; // 기존 리스트 초기화
+        
+        posts.forEach((post, index) => {
+            const li = document.createElement('li');
+            li.innerText = post.title;
+            // 리스트 제목 클릭 시 상세 뷰 열기
+            li.addEventListener('click', () => openDetailView(category, index));
+            ul.appendChild(li);
+        });
     });
-});
+}
 
-// 2. 카드 클릭 시 작동할 로직
-cards.forEach(card => {
-    card.addEventListener('click', () => {
-        currentCategory = card.querySelector('h3').innerText; 
-        modalCategory.innerText = currentCategory + " 기술 일지";
-
-        const savedData = JSON.parse(localStorage.getItem('jokers_post_' + currentCategory));
-
-        if (savedData) {
-            // [읽기 모드] 글이 이미 있을 때
-            postTitle.style.display = 'none';
-            postContent.style.display = 'none';
-            btnSave.style.display = 'none';
-            readContent.style.display = 'block';
-            
-            // 수정, 삭제 버튼 표시
-            btnEdit.style.display = 'block';
-            btnDelete.style.display = 'block';
-            
-            readContent.innerHTML = `<h3 style="margin-top:0; color:#fff;">${savedData.title}</h3><p style="color:#aaa;">${savedData.content}</p>`;
-        } else {
-            // [쓰기 모드] 글이 없을 때
-            postTitle.style.display = 'block';
-            postContent.style.display = 'block';
-            btnSave.style.display = 'block';
-            readContent.style.display = 'none';
-            
-            // 쓰기 모드일 땐 수정, 삭제 숨김
-            btnEdit.style.display = 'none';
-            btnDelete.style.display = 'none';
-            
-            postTitle.value = '';
-            postContent.value = '';
-        }
-
+// --- [액션] 카드에서 새 글 작성(+) 버튼 클릭 ---
+document.querySelectorAll('.btn-add-post').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        currentCategory = e.target.closest('.card').getAttribute('data-category');
+        isEditMode = false;
+        
+        modalCategory.innerText = currentCategory + " - 새 글 작성";
+        postTitle.value = '';
+        postContent.value = '';
+        
         modal.style.display = 'flex';
     });
 });
 
-// 3. 저장(배포) 버튼 로직
+// --- [액션] 모달창에서 저장(배포) 버튼 클릭 ---
 btnSave.addEventListener('click', () => {
-    if(postTitle.value === '' || postContent.value === '') {
-        alert("지휘관! 제목과 내용을 모두 입력해야 배포할 수 있습니다.");
-        return;
+    if(!postTitle.value || !postContent.value) return alert("제목과 내용을 입력하십시오.");
+
+    let posts = getPosts(currentCategory);
+    
+    if(isEditMode) {
+        // 기존 글 수정
+        posts[currentPostIndex].title = postTitle.value;
+        posts[currentPostIndex].content = postContent.value;
+    } else {
+        // 새 글 추가
+        const newPost = {
+            title: postTitle.value,
+            content: postContent.value,
+            date: new Date().toLocaleString()
+        };
+        posts.unshift(newPost); // 최신 글을 맨 위(배열 앞)에 추가
     }
 
-    const postData = {
-        title: postTitle.value,
-        content: postContent.value,
-        time: "Written"
-    };
-
-    localStorage.setItem('jokers_post_' + currentCategory, JSON.stringify(postData));
-
-    cards.forEach(card => {
-        if(card.querySelector('h3').innerText === currentCategory) {
-            card.style.borderColor = "#32D74B";
-            card.querySelector('.card-time').innerText = "Written";
-            card.querySelector('.card-time').style.color = "#32D74B";
-        }
-    });
-
-    alert("배포 완료! 데이터가 성공적으로 적재되었습니다.");
+    savePosts(currentCategory, posts);
     modal.style.display = 'none';
+    
+    if(isEditMode) {
+        openDetailView(currentCategory, currentPostIndex); // 수정 후 다시 뷰로
+    } else {
+        renderDashboard(); // 메인 화면 갱신
+    }
 });
 
-// 🛠️ 신규 무기 2: 수정(Edit) 프로토콜
-btnEdit.addEventListener('click', () => {
-    const savedData = JSON.parse(localStorage.getItem('jokers_post_' + currentCategory));
-    
-    // 읽기 화면 숨기고, 입력창 띄우기
-    readContent.style.display = 'none';
-    postTitle.style.display = 'block';
-    postContent.style.display = 'block';
-    
-    // 기존 데이터 텍스트 박스에 다시 채워넣기
-    postTitle.value = savedData.title;
-    postContent.value = savedData.content;
+// 모달 닫기
+btnClose.addEventListener('click', () => modal.style.display = 'none');
 
-    // 버튼 교체 (수정/삭제 숨기고 저장 버튼 띄우기)
-    btnEdit.style.display = 'none';
-    btnDelete.style.display = 'none';
-    btnSave.style.display = 'block';
+// --- [뷰 함수] 상세 읽기 화면 열기 (이전/다음 로직 포함) ---
+function openDetailView(category, index) {
+    currentCategory = category;
+    currentPostIndex = index;
+    const posts = getPosts(category);
+    const post = posts[index];
+
+    // 화면 스위치 전환
+    viewMain.style.display = 'none';
+    viewDetail.style.display = 'block';
+
+    // 데이터 채우기
+    detailCategory.innerText = category;
+    detailTitle.innerText = post.title;
+    detailDate.innerText = post.date;
+    detailBody.innerText = post.content;
+
+    // 네비게이션 버튼 상태 처리
+    btnPrevPost.disabled = (index === posts.length - 1); // 더 이상 예전 글이 없으면 비활성
+    btnNextPost.disabled = (index === 0); // 더 이상 최신 글이 없으면 비활성
+}
+
+// --- [액션] 상세 뷰 - 메인으로 돌아가기 ---
+btnBackMain.addEventListener('click', () => {
+    viewDetail.style.display = 'none';
+    viewMain.style.display = 'block';
+    renderDashboard();
 });
 
-// 💣 신규 무기 3: 삭제(Delete) 프로토콜
-btnDelete.addEventListener('click', () => {
-    // 실수로 지우지 않도록 경고창 띄우기
-    if(confirm("경고! 정말 이 기술 일지를 영구 폭파(삭제)하시겠습니까?")) {
-        // DB(로컬 스토리지)에서 데이터 날리기
-        localStorage.removeItem('jokers_post_' + currentCategory);
+// --- [액션] 상세 뷰 - 이전/다음 글 넘기기 ---
+btnPrevPost.addEventListener('click', () => openDetailView(currentCategory, currentPostIndex + 1));
+btnNextPost.addEventListener('click', () => openDetailView(currentCategory, currentPostIndex - 1));
+
+// --- [액션] 상세 뷰 - 글 삭제 ---
+btnDetailDelete.addEventListener('click', () => {
+    if(confirm("이 게시글을 삭제하시겠습니까?")) {
+        let posts = getPosts(currentCategory);
+        posts.splice(currentPostIndex, 1); // 배열에서 해당 인덱스 삭제
+        savePosts(currentCategory, posts);
         
-        // 카드 UI 초기화 (초록색 빛 빼고 원래대로 복구)
-        cards.forEach(card => {
-            if(card.querySelector('h3').innerText === currentCategory) {
-                card.style.borderColor = "#3f414d";
-                card.querySelector('.card-time').innerText = "Just now";
-                card.querySelector('.card-time').style.color = "#888";
-            }
-        });
-
-        alert("삭제 완료. 해당 카드가 초기화되었습니다.");
-        modal.style.display = 'none';
+        btnBackMain.click(); // 삭제 후 메인으로 튕겨내기
     }
 });
 
-// 4. 닫기 버튼 로직
-btnClose.addEventListener('click', () => {
-    modal.style.display = 'none';
+// --- [액션] 상세 뷰 - 글 수정 ---
+btnDetailEdit.addEventListener('click', () => {
+    isEditMode = true;
+    const posts = getPosts(currentCategory);
+    
+    modalCategory.innerText = currentCategory + " - 글 수정";
+    postTitle.value = posts[currentPostIndex].title;
+    postContent.value = posts[currentPostIndex].content;
+    
+    modal.style.display = 'flex';
 });
+
+// 초기화: 스크립트가 로드되면 대시보드 먼저 렌더링
+renderDashboard();

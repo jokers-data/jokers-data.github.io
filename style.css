@@ -1,29 +1,32 @@
-/* style.css */
-/* 모든 요소의 크기 계산을 테두리 기준으로 묶음 (칼각의 핵심) */
+/* =========================================
+   1. 기본 설정 및 골조 (Base & Layout)
+========================================= */
 * {
     box-sizing: border-box;
 }
 
 body {
-    background-color: #111217; /* 깊고 어두운 심연의 배경색 */
-    color: #E2E8F0; /* 눈이 편안한 밝은 회색 텍스트 */
+    background-color: #111217;
+    color: #E2E8F0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    padding: 60px; /* 전체적인 여백 */
+    padding: 60px;
     display: flex;
     justify-content: center;
 }
 
 .dashboard-container {
     width: 100%;
-    max-width: 1440px; /* 도면과 동일한 최대 가로폭 */
+    max-width: 1440px;
 }
 
-/* 1. 프로필 관제 패널 (왼쪽 여백 축소) */
+/* =========================================
+   2. 상단 프로필 관제 패널 (Profile Panel)
+========================================= */
 .profile-panel {
     background-color: #2B2D36;
     border-radius: 12px;
-    padding: 40px 50px 40px 30px; /* ★ 기존 좌우 50px에서 왼쪽만 30px로 줄여 이미지를 왼쪽으로 밀착 */
+    padding: 40px 50px 40px 30px;
     margin-bottom: 50px;
     border: 1px solid #3f414d;
     display: flex;
@@ -32,30 +35,26 @@ body {
     position: relative;
 }
 
-/* 2. 프로필 사진 틀 (네모 배경 및 테두리 완전 철거) */
 .profile-pic-container {
     width: 110px;
     height: 110px;
     flex-shrink: 0;
     border-radius: 0; 
     margin-top: 5px;
-    background-color: transparent; /* ★ 뒤에 깔리던 어두운 배경색 제거 */
-    border: none; /* ★ 거슬리던 네모난 테두리 선 완전 철거 */
+    background-color: transparent;
+    border: none;
 }
 
-/* 3. 텍스트 영역 남은 공간 확보 */
 .profile-text {
     flex: 1;
 }
 
-/* 🟢 상태 표시등 (형광 초록) */
 .status-dot {
     color: #32D74B;
     font-size: 1.2em;
     margin-right: 10px;
 }
 
-/* 깃허브 외부 링크 (초록 포인트) */
 .github-link {
     position: absolute;
     top: 30px;
@@ -66,7 +65,6 @@ body {
     font-size: 14px;
 }
 
-/* 아이콘 정보 줄 */
 .profile-info-row {
     color: #888;
     font-size: 14px;
@@ -75,14 +73,15 @@ body {
     margin-top: 20px;
 }
 
-/* 출판물 타이틀 여백 최적화 */
+/* =========================================
+   3. 메인 뷰: 검색 및 카드 그리드 (Main View)
+========================================= */
 h2.publications-title {
     font-size: 24px;
     margin-top: 0;
     margin-bottom: 20px;
 }
 
-/* 검색창 디자인 (이전 코드에 덮어쓰기) */
 .search-input {
     width: 100%;
     background-color: transparent;
@@ -91,40 +90,41 @@ h2.publications-title {
     padding: 15px 20px;
     color: white;
     font-size: 16px;
-    margin-bottom: 40px; /* 카드와의 간격 */
+    margin-bottom: 40px;
 }
 
 .search-input:focus {
     outline: none;
-    border-color: #32D74B; /* 포커스 시 초록 발광 */
+    border-color: #32D74B;
 }
 
-/* 3단계: 출판물 카드 그리드 (6칸) */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 도면대로 3열 배치 */
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
 }
 
 .card {
     background-color: #2B2D36;
     border-radius: 12px;
-    height: 180px; /* 카드 높이 고정 */
+    height: 220px; /* 리스트가 들어갈 수 있도록 높이 살짝 증가 */
     padding: 25px;
     border: 1px solid #3f414d;
-    transition: transform 0.2s; /* 마우스 오버 효과 */
+    transition: transform 0.2s;
+    overflow: hidden;
 }
 
 .card:hover {
-    transform: translateY(-5px); /* 살짝 뜨는 효과 */
-    border-color: #32D74B; /* 테두리 발광 */
+    transform: translateY(-5px);
+    border-color: #32D74B;
 }
 
 .card-header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 10px;
+    align-items: center;
+    border-bottom: 1px solid #3f414d;
+    padding-bottom: 10px;
 }
 
 .card h3 {
@@ -132,38 +132,116 @@ h2.publications-title {
     font-size: 20px;
 }
 
-.card-time {
-    color: #888;
-    font-size: 12px;
+/* --- 메인 뷰: 카드 내부 리스트 요소 --- */
+.btn-add-post {
+    background: transparent;
+    border: none;
+    color: #E2E8F0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s;
+}
+.btn-add-post:hover { 
+    transform: scale(1.2); 
+    color: #32D74B; 
 }
 
+.post-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.post-list li {
+    padding: 8px 0;
+    font-size: 14px;
+    color: #bbb;
+    cursor: pointer;
+    border-bottom: 1px dashed #3f414d;
+    transition: color 0.2s;
+}
+.post-list li::before {
+    content: "▶";
+    color: #32D74B;
+    margin-right: 8px;
+    font-size: 10px;
+}
+.post-list li:hover { 
+    color: #fff; 
+}
+
+/* =========================================
+   4. 상세 읽기 뷰 (Detail View)
+========================================= */
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.detail-content-box {
+    background-color: #2B2D36;
+    padding: 50px;
+    border-radius: 12px;
+    border: 1px solid #3f414d;
+    min-height: 400px;
+}
+
+.detail-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn-nav {
+    background-color: #3f414d;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.btn-nav:hover { 
+    background-color: #32D74B; 
+    color: #111217; 
+}
+.btn-nav:disabled { 
+    opacity: 0.3; 
+    cursor: not-allowed; 
+}
+
+/* =========================================
+   5. 입력/수정 모달창 (Modal & Buttons)
+========================================= */
 .modal-overlay {
-    display: none; /* 평소에는 완벽히 숨김 */
-    position: fixed; /* 화면 스크롤과 무관하게 고정 */
+    display: none;
+    position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    background-color: rgba(17, 18, 23, 0.85); /* 딥 네이비 반투명 */
-    backdrop-filter: blur(5px); /* 배경을 고급스럽게 흐리게 처리 */
-    z-index: 9999; /* 모든 요소의 최상단에 배치 */
-    justify-content: center; /* 가로 중앙 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
+    background-color: rgba(17, 18, 23, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
 }
 
-/* 2. 중앙에 뜨는 진짜 윈도우 창 */
 .modal-content {
     background-color: #1a1b21;
     width: 90%;
-    max-width: 700px; /* 창의 최대 너비 */
+    max-width: 700px;
     border-radius: 16px;
     border: 1px solid #3f414d;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); /* 깊이감을 주는 그림자 */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
     padding: 40px;
     display: flex;
     flex-direction: column;
-    gap: 25px; /* 내부 요소들 간의 간격 */
+    gap: 25px;
 }
 
-/* 3. 창 제목 (Category) */
 #modal-category {
     margin: 0;
     color: #32D74B;
@@ -172,10 +250,9 @@ h2.publications-title {
     padding-bottom: 15px;
 }
 
-/* 4. 제목 및 내용 입력 영역 */
 #post-title, #post-content {
     width: 100%;
-    background-color: #0d0e12; /* 입력창은 더 어둡게 파서 구분감 부여 */
+    background-color: #0d0e12;
     border: 1px solid #3f414d;
     color: #E2E8F0;
     border-radius: 8px;
@@ -187,30 +264,16 @@ h2.publications-title {
 }
 
 #post-title:focus, #post-content:focus {
-    border-color: #32D74B; /* 클릭 시 초록색 발광 */
+    border-color: #32D74B;
 }
 
 #post-content {
-    height: 300px; /* 글쓰기 영역을 시원하게 확보 */
-    resize: vertical; /* 세로로만 크기 조절 가능 */
+    height: 300px;
+    resize: vertical;
     line-height: 1.6;
 }
 
-/* 5. 읽기 전용 뷰어 영역 */
-.read-only-content {
-    display: none;
-    background-color: #0d0e12;
-    padding: 25px;
-    border-radius: 8px;
-    border: 1px solid #3f414d;
-    min-height: 200px;
-    line-height: 1.7;
-    white-space: pre-wrap;
-    overflow-y: auto;
-    max-height: 50vh; /* 글이 길면 스크롤 생성 */
-}
-
-/* 6. 하단 버튼 영역 */
+/* 버튼 공통 스타일 */
 .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -218,7 +281,7 @@ h2.publications-title {
     margin-top: 10px;
 }
 
-.modal-actions button {
+button {
     padding: 12px 25px;
     border: none;
     border-radius: 6px;
@@ -233,15 +296,20 @@ h2.publications-title {
     color: #888; 
     border: 1px solid #3f414d;
 }
-.btn-secondary:hover { background-color: #2B2D36; color: white; }
+.btn-secondary:hover { 
+    background-color: #2B2D36; 
+    color: white; 
+}
 
 .btn-primary { 
     background-color: #32D74B; 
     color: #111217; 
 }
-.btn-primary:hover { background-color: #28a73b; transform: translateY(-2px); }
+.btn-primary:hover { 
+    background-color: #28a73b; 
+    transform: translateY(-2px); 
+}
 
-/* 위험(삭제) 버튼 스타일 */
 .btn-danger { 
     background-color: transparent; 
     color: #ff4757; 
