@@ -137,75 +137,118 @@ h2.publications-title {
     font-size: 12px;
 }
 
-/* --- 모달창 (팝업) 스타일 --- */
 .modal-overlay {
-    display: none; /* 평소에는 숨김 */
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* 반투명 검은 배경 */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    display: none; /* 평소에는 완벽히 숨김 */
+    position: fixed; /* 화면 스크롤과 무관하게 고정 */
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(17, 18, 23, 0.85); /* 딥 네이비 반투명 */
+    backdrop-filter: blur(5px); /* 배경을 고급스럽게 흐리게 처리 */
+    z-index: 9999; /* 모든 요소의 최상단에 배치 */
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
 }
 
+/* 2. 중앙에 뜨는 진짜 윈도우 창 */
 .modal-content {
     background-color: #1a1b21;
-    border: 1px solid #32D74B; /* 초록색 테두리로 활성화 상태 강조 */
-    border-radius: 12px;
-    padding: 40px;
     width: 90%;
-    max-width: 600px;
+    max-width: 700px; /* 창의 최대 너비 */
+    border-radius: 16px;
+    border: 1px solid #3f414d;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); /* 깊이감을 주는 그림자 */
+    padding: 40px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px; /* 내부 요소들 간의 간격 */
 }
 
-.modal-content h2 { margin-top: 0; color: #32D74B; }
+/* 3. 창 제목 (Category) */
+#modal-category {
+    margin: 0;
+    color: #32D74B;
+    font-size: 24px;
+    border-bottom: 1px solid #3f414d;
+    padding-bottom: 15px;
+}
 
-/* 입력창 및 텍스트 영역 */
+/* 4. 제목 및 내용 입력 영역 */
 #post-title, #post-content {
     width: 100%;
-    background-color: #2B2D36;
+    background-color: #0d0e12; /* 입력창은 더 어둡게 파서 구분감 부여 */
     border: 1px solid #3f414d;
-    color: white;
+    color: #E2E8F0;
     border-radius: 8px;
-    padding: 15px;
+    padding: 15px 20px;
     font-size: 16px;
     font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#post-title:focus, #post-content:focus {
+    border-color: #32D74B; /* 클릭 시 초록색 발광 */
 }
 
 #post-content {
-    height: 200px;
-    resize: none; /* 크기 조절 방지 */
+    height: 300px; /* 글쓰기 영역을 시원하게 확보 */
+    resize: vertical; /* 세로로만 크기 조절 가능 */
+    line-height: 1.6;
 }
 
-/* 읽기 전용 영역 (글 저장 후 보여질 곳) */
+/* 5. 읽기 전용 뷰어 영역 */
 .read-only-content {
     display: none;
-    background-color: #2B2D36;
-    padding: 20px;
+    background-color: #0d0e12;
+    padding: 25px;
     border-radius: 8px;
-    min-height: 150px;
-    line-height: 1.6;
-    white-space: pre-wrap; /* 줄바꿈 유지 */
+    border: 1px solid #3f414d;
+    min-height: 200px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    max-height: 50vh; /* 글이 길면 스크롤 생성 */
 }
 
-/* 버튼 스타일 */
+/* 6. 하단 버튼 영역 */
 .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
+    margin-top: 10px;
 }
 
-button {
-    padding: 10px 20px;
+.modal-actions button {
+    padding: 12px 25px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s;
 }
 
-.btn-secondary { background-color: #3f414d; color: white; }
-.btn-primary { background-color: #32D74B; color: #111217; }
-.btn-primary:hover { background-color: #28a73b; }
+.btn-secondary { 
+    background-color: transparent; 
+    color: #888; 
+    border: 1px solid #3f414d;
+}
+.btn-secondary:hover { background-color: #2B2D36; color: white; }
+
+.btn-primary { 
+    background-color: #32D74B; 
+    color: #111217; 
+}
+.btn-primary:hover { background-color: #28a73b; transform: translateY(-2px); }
+
+/* 위험(삭제) 버튼 스타일 */
+.btn-danger { 
+    background-color: transparent; 
+    color: #ff4757; 
+    border: 1px solid #ff4757; 
+}
+.btn-danger:hover { 
+    background-color: #ff4757; 
+    color: white; 
+    transform: translateY(-2px); 
+}
