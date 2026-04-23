@@ -477,3 +477,11 @@ button {
 #toc-list a:hover { color: var(--accent-color); }
 #toc-list a.h1, #toc-list a.h2 { font-weight: bold; }
 #toc-list a.h3 { padding-left: 15px; font-size: 13px; }
+
+.profile-info-row a img {
+    transition: all 0.3s ease;
+}
+.profile-info-row a img:hover {
+    transform: translateY(-3px) scale(1.05); /* 살짝 위로 떠오름 */
+    filter: drop-shadow(0 0 8px #58a6ff); /* 파란색 네온 빛 발산 */
+}
