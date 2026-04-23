@@ -125,7 +125,7 @@ function openDetailView(index) {
     detailTitle.innerText = post.title;
     detailDate.innerText = post.date;
     detailCategory.innerText = post.category;
-    detailBody.innerText = post.content;
+    detailBody.innerHTML = marked.parse(post.content);
     
     // 스크롤 맨 위로 올리기
     window.scrollTo(0, 0);
