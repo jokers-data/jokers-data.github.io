@@ -320,6 +320,18 @@ h2.publications-title {
 }
 
 /* 버튼 공통 스타일 */
+
+:root {
+    --accent-color: #58a6ff; /* 촌스러운 초록색 대신 세련된 블루 */
+    --border-color: #30363d;
+    --card-bg: #1c2128;
+}
+
+/* 기존 초록색 포인트들 수정 */
+.status-dot, #modal-category, .btn-primary, .post-list li::before {
+    color: var(--accent-color) !important;
+}
+
 .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -347,10 +359,11 @@ button {
     color: white; 
 }
 
-.btn-primary { 
-    background-color: #32D74B; 
-    color: #111217; 
+.btn-primary {
+    background-color: var(--accent-color) !important;
+    color: #ffffff !important;
 }
+
 .btn-primary:hover { 
     background-color: #28a73b; 
     transform: translateY(-2px); 
@@ -365,4 +378,34 @@ button {
     background-color: #ff4757; 
     color: white; 
     transform: translateY(-2px); 
+}
+
+/* 필터 컨테이너 및 버튼 */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tag-btn {
+    background-color: #21262d;
+    color: #8b949e;
+    border: 1px solid var(--border-color);
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tag-btn:hover {
+    border-color: #8b949e;
+    color: #c9d1d9;
+}
+
+.tag-btn.active {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
 }

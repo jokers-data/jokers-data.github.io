@@ -24,10 +24,13 @@ const detailBody = document.getElementById('detail-body');
 const btnBackMain = document.getElementById('btn-back-main');
 const btnDetailEdit = document.getElementById('btn-detail-edit');
 const btnDetailDelete = document.getElementById('btn-detail-delete');
+const filterBtns = document.querySelectorAll('.tag-btn');
+
 
 // 상태 관리
 let currentPostIndex = -1; 
 let isEditMode = false;
+let activeCategory = 'All';
 
 // --- DB (로컬 스토리지) 관리 ---
 function getAllPosts() {
@@ -42,29 +45,29 @@ function saveAllPosts(posts) {
 // --- 메인 화면 렌더링 (카드 피드 생성) ---
 function renderDashboard(searchTerm = "") {
     const posts = getAllPosts();
-    postGrid.innerHTML = ''; // 그리드 초기화
+    const postGrid = document.getElementById('post-grid');
+    postGrid.innerHTML = ''; 
 
     posts.forEach((post, index) => {
-        // 검색 필터링 로직
-        if(searchTerm && !post.title.toLowerCase().includes(searchTerm.toLowerCase())) return;
+        // 검색어 필터
+        const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase());
+        // 카테고리 필터
+        const matchesCategory = (activeCategory === 'All' || post.category === activeCategory);
 
-        // 본문 요약 (150자)
-        const summary = post.content.length > 150 ? post.content.substring(0, 150) + "..." : post.content;
-
-        // 카드 생성
-        const card = document.createElement('div');
-        card.className = 'post-card';
-        card.innerHTML = `
-            <div class="post-card-header">
-                <h3>${post.title}</h3>
-                <span class="post-card-date">${post.date}</span>
-            </div>
-            <p class="post-card-summary">${summary}</p>
-        `;
-        
-        // 카드 클릭 시 상세 뷰로 이동
-        card.addEventListener('click', () => openDetailView(index));
-        postGrid.appendChild(card);
+        if (matchesSearch && matchesCategory) {
+            const summary = post.content.length > 150 ? post.content.substring(0, 150) + "..." : post.content;
+            const card = document.createElement('div');
+            card.className = 'post-card';
+            card.innerHTML = `
+                <div class="post-card-header">
+                    <h3>${post.title}</h3>
+                    <span class="post-card-date">${post.date}</span>
+                </div>
+                <p class="post-card-summary">${summary}</p>
+            `;
+            card.addEventListener('click', () => openDetailView(index));
+            postGrid.appendChild(card);
+        }
     });
 }
 
@@ -160,6 +163,19 @@ btnDetailEdit.addEventListener('click', () => {
     postContent.value = post.content;
     
     modal.style.display = 'flex';
+});
+
+// 3. 필터 버튼 이벤트 리스너 추가
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // 버튼 활성화 상태 변경
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // 선택된 카테고리 저장 및 렌더링
+        activeCategory = btn.getAttribute('data-category');
+        renderDashboard(document.getElementById('search-input').value);
+    });
 });
 
 // 초기화
