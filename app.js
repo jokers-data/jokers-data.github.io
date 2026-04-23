@@ -25,7 +25,7 @@ const btnBackMain = document.getElementById('btn-back-main');
 const btnDetailEdit = document.getElementById('btn-detail-edit');
 const btnDetailDelete = document.getElementById('btn-detail-delete');
 const filterBtns = document.querySelectorAll('.tag-btn');
-
+const themeToggle = document.getElementById('theme-toggle');
 
 // 상태 관리
 let currentPostIndex = -1; 
@@ -68,6 +68,83 @@ function renderDashboard(searchTerm = "") {
             card.addEventListener('click', () => openDetailView(index));
             postGrid.appendChild(card);
         }
+    });
+}
+
+// ==========================================
+// 1. [네온사인] 마크다운 엔진에 Highlight.js 장착
+// ==========================================
+marked.setOptions({
+    highlight: function(code, lang) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, { language }).value;
+    }
+});
+
+// ==========================================
+// 2. [카멜레온] 주/야간 모드 스위치
+// ==========================================
+let currentTheme = localStorage.getItem('jokers_theme') || 'dark';
+if(currentTheme === 'light') {
+    document.body.setAttribute('data-theme', 'light');
+    themeToggle.innerText = '🌙';
+}
+
+themeToggle.addEventListener('click', () => {
+    if (document.body.getAttribute('data-theme') === 'light') {
+        document.body.removeAttribute('data-theme');
+        localStorage.setItem('jokers_theme', 'dark');
+        themeToggle.innerText = '☀️';
+    } else {
+        document.body.setAttribute('data-theme', 'light');
+        localStorage.setItem('jokers_theme', 'light');
+        themeToggle.innerText = '🌙';
+    }
+});
+
+// ==========================================
+// 3. [네비게이터] 스크롤 진행바
+// ==========================================
+window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.getElementById('progress-bar').style.width = scrolled + '%';
+});
+
+// ==========================================
+// 4. [네비게이터] 자동 목차(TOC) 생성 함수
+// ==========================================
+function generateTOC() {
+    const tocContainer = document.getElementById('toc-container');
+    const tocList = document.getElementById('toc-list');
+    tocList.innerHTML = ''; // 초기화
+
+    // 본문 안의 h1, h2, h3 태그를 모두 찾음
+    const headers = detailBody.querySelectorAll('h1, h2, h3');
+    
+    if(headers.length === 0) {
+        tocContainer.style.display = 'none'; // 제목이 없으면 목차 숨김
+        return;
+    }
+
+    tocContainer.style.display = 'block'; // 목차 표시
+
+    headers.forEach((header, index) => {
+        header.id = 'heading-' + index; // 스크롤을 위한 고유 ID 부여
+        
+        const link = document.createElement('a');
+        link.href = '#' + header.id;
+        link.innerText = header.innerText;
+        link.className = header.tagName.toLowerCase(); // h1, h2, h3 클래스 부여 (들여쓰기 용도)
+        
+        // 클릭 시 스무스하게 스크롤 이동
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        
+        tocList.appendChild(link);
     });
 }
 
@@ -129,6 +206,8 @@ function openDetailView(index) {
     detailDate.innerText = post.date;
     detailCategory.innerText = post.category;
     detailBody.innerHTML = marked.parse(post.content);
+
+    generateTOC();
     
     // 스크롤 맨 위로 올리기
     window.scrollTo(0, 0);

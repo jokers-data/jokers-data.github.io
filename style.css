@@ -1,3 +1,34 @@
+
+/* style.css 맨 위에 추가 (카멜레온 색상 변수 설정) */
+:root {
+    --bg-color: #111217;
+    --text-color: #E2E8F0;
+    --card-bg: #1c2128;
+    --border-color: #30363d;
+    --accent-color: #58a6ff;
+}
+
+/* ☀️ 라이트 모드 (카멜레온) 발동 시 색상 */
+[data-theme="light"] {
+    --bg-color: #f6f8fa;
+    --text-color: #1F2328;
+    --card-bg: #ffffff;
+    --border-color: #d0d7de;
+    --accent-color: #0969da;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s; /* 부드러운 테마 전환 */
+    /* ... 기존 body 속성 유지 ... */
+}
+
+/* 요소들 색상 변수로 교체 (기존 색상을 덮어쓰기) */
+.profile-panel, .post-card, .detail-header-card { background-color: var(--card-bg); border-color: var(--border-color); }
+.search-input, .input-field { background-color: var(--bg-color); border-color: var(--border-color); color: var(--text-color); }
+.post-card h3, .detail-header-card h1 { color: var(--text-color); }
+
 /* =========================================
    1. 기본 설정 및 골조 (Base & Layout)
 ========================================= */
@@ -409,3 +440,40 @@ button {
     color: #ffffff;
     border-color: var(--accent-color);
 }
+
+/* 1. 상단 스크롤 진행바 */
+#progress-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: transparent;
+    z-index: 10000;
+}
+#progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.1s;
+}
+
+/* 2. 목차 (TOC) 네비게이터 */
+.toc-container {
+    width: 250px;
+    position: sticky;
+    top: 50px; /* 스크롤 시 화면 상단에 고정 */
+    height: fit-content;
+    border-left: 2px solid var(--border-color);
+    padding-left: 20px;
+    display: none; /* 기본은 숨김, 자바스크립트가 활성화함 */
+}
+#toc-list a {
+    display: block;
+    color: #8b949e;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 10px;
+    transition: color 0.2s;
+}
+#toc-list a:hover { color: var(--accent-color); }
+#toc-list a.h1, #toc-list a.h2 { font-weight: bold; }
+#toc-list a.h3 { padding-left: 15px; font-size: 13px; }
