@@ -289,3 +289,47 @@ async function fetchGitHubStats() {
 
 // 기지 가동 시 즉시 수신 시작
 fetchGitHubStats();
+
+// ==========================================
+// 8. [기상 관측소] Open-Meteo API 통신
+// ==========================================
+async function fetchWeather() {
+    // 서울(37.56, 126.97)과 부산(35.17, 129.07)의 위도/경도
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=37.5665,35.1796&longitude=126.9780,129.0756&current_weather=true";
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('날씨 위성 교신 실패');
+        
+        // 배열 배열 형태로 리턴됨: data[0]은 서울, data[1]은 부산
+        const data = await response.json(); 
+        
+        // 날씨 코드를 직관적인 이모지로 변환하는 함수
+        const getWeatherEmoji = (code) => {
+            if (code === 0) return '☀️'; // 맑음
+            if (code >= 1 && code <= 3) return '☁️'; // 구름조금/많음
+            if (code >= 51 && code <= 67) return '🌧️'; // 비
+            if (code >= 71 && code <= 77) return '❄️'; // 눈
+            if (code >= 95) return '⛈️'; // 뇌우
+            return '🌫️'; // 기타/흐림
+        };
+
+        const seoulTemp = data[0].current_weather.temperature;
+        const seoulEmoji = getWeatherEmoji(data[0].current_weather.weathercode);
+        
+        const busanTemp = data[1].current_weather.temperature;
+        const busanEmoji = getWeatherEmoji(data[1].current_weather.weathercode);
+
+        // 화면에 바인딩
+        document.getElementById('weather-seoul').innerText = `${seoulEmoji} ${seoulTemp}°C`;
+        document.getElementById('weather-busan').innerText = `${busanEmoji} ${busanTemp}°C`;
+
+    } catch (error) {
+        console.error("⚠️ 기상 레이더 에러:", error);
+        document.getElementById('weather-seoul').innerText = 'ERR';
+        document.getElementById('weather-busan').innerText = 'ERR';
+    }
+}
+
+// 기지 가동 시 날씨 데이터 즉시 수신
+fetchWeather();
