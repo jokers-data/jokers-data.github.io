@@ -259,3 +259,33 @@ filterBtns.forEach(btn => {
 
 // 초기화
 renderDashboard();
+
+// ==========================================
+// 7. [라이브 텔레메트리] GitHub API 통신 엔진
+// ==========================================
+async function fetchGitHubStats() {
+    const username = 'jokers-data'; // 지휘관님의 GitHub ID
+    const apiUrl = `https://api.github.com/users/${username}`;
+
+    try {
+        console.log("🛰️ Connecting Github...");
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) throw new Error('Connection Failed');
+        
+        const data = await response.json();
+
+        // 실시간 데이터 바인딩
+        document.getElementById('gh-repos').innerText = data.public_repos;
+        document.getElementById('gh-followers').innerText = data.followers;
+        document.getElementById('gh-gists').innerText = data.public_gists;
+        
+        console.log("✅ Successs Telemetry");
+    } catch (error) {
+        console.error("⚠️ Telemetry Response Error!:", error);
+        document.querySelectorAll('.stat-item span[id]').forEach(el => el.innerText = 'ERR');
+    }
+}
+
+// 기지 가동 시 즉시 수신 시작
+fetchGitHubStats();
