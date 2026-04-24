@@ -485,3 +485,43 @@ button {
     transform: translateY(-3px) scale(1.05); /* 살짝 위로 떠오름 */
     filter: drop-shadow(0 0 8px #58a6ff); /* 파란색 네온 빛 발산 */
 }
+
+/* ==========================================
+   🌤️ 날씨 위젯 (Trendy Minimalist)
+   ========================================== */
+   .weather-widget {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(139, 148, 158, 0.1); /* 반투명 배경 */
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    border-radius: 12px; /* 둥글고 부드러운 최신 트렌드 */
+    backdrop-filter: blur(5px);
+}
+
+.weather-city {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.city-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b949e;
+    letter-spacing: 1px;
+}
+
+.weather-temp {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 3px;
+}
+
+.weather-divider {
+    width: 1px;
+    height: 30px;
+    background-color: var(--border-color);
+}
