@@ -355,3 +355,25 @@ document.getElementById('search-input').addEventListener('input', (e) => {
 
 // 기지 가동 시 날씨 데이터 즉시 수신
 fetchWeather();
+
+document.getElementById('btn-detail-delete').addEventListener('click', () => {
+    // 현재 화면에 떠 있는 게시글의 제목을 가져옵니다.
+    const titleToDelete = document.getElementById('detail-title').innerText;
+    
+    // 오작동 방지를 위한 2차 안전장치 (Confirm 창)
+    if (confirm(`경고: [${titleToDelete}] 게시글을 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) {
+        
+        // 1. 블랙박스(창고)에서 전체 데이터 꺼내기
+        let posts = JSON.parse(localStorage.getItem('jokers_posts') || '[]');
+        
+        // 2. 현재 제목과 일치하는 데이터만 걸러내어 삭제 (필터링)
+        posts = posts.filter(post => post.title !== titleToDelete);
+        
+        // 3. 삭제가 완료된 데이터를 블랙박스에 다시 덮어쓰기
+        localStorage.setItem('jokers_posts', JSON.stringify(posts));
+        
+        // 4. 화면 즉시 새로고침 (메인 관제탑으로 강제 복귀)
+        alert('데이터 소각 완료.');
+        location.reload();
+    }
+});
