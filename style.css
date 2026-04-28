@@ -525,3 +525,28 @@ button {
     height: 30px;
     background-color: var(--border-color);
 }
+
+/* ==========================================
+   🖋️ 에디터 팝업(모달) 스텔스 다크 도색
+   ========================================== */
+   .modal-content {
+    background-color: #161b22 !important; /* 관제탑과 어울리는 짙은 다크 그레이 */
+    border: 1px solid #30363d !important; /* 세련된 얇은 테두리 */
+    color: #c9d1d9 !important; /* 눈이 편안한 회색 텍스트 */
+    box-shadow: 0 12px 28px rgba(0,0,0,0.8) !important; /* 화면에서 확 떠보이는 입체 그림자 */
+}
+
+/* 팝업창 내부 제목 글자색 (새 글 작성) */
+.modal-content h2 {
+    color: #ffffff !important;
+}
+
+/* 팝업창 내부 닫기 버튼을 좀 더 자연스럽게 */
+#btn-close {
+    background-color: #21262d;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+}
+#btn-close:hover {
+    background-color: #30363d;
+}
