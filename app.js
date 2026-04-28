@@ -331,5 +331,27 @@ async function fetchWeather() {
     }
 }
 
+// app.js: 기존 검색 로직을 Fuse.js로 대체
+let fuse;
+
+function initSearchEngine(posts) {
+    const options = {
+        keys: ['title', 'content', 'category'],
+        threshold: 0.3 // 0에 가까울수록 정확, 1에 가까울수록 너그러움
+    };
+    fuse = new Fuse(posts, options);
+}
+
+// 검색창 이벤트 리스너 수정
+document.getElementById('search-input').addEventListener('input', (e) => {
+    const query = e.target.value;
+    if (!query) {
+        renderDashboard(); // 검색어 없으면 전체 출력
+        return;
+    }
+    const results = fuse.search(query).map(result => result.item);
+    renderResults(results); // 검색된 결과만 렌더링
+});
+
 // 기지 가동 시 날씨 데이터 즉시 수신
 fetchWeather();
