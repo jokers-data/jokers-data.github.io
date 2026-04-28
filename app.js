@@ -353,8 +353,7 @@ document.getElementById('search-input').addEventListener('input', (e) => {
     renderResults(results); // 검색된 결과만 렌더링
 });
 
-// 기지 가동 시 날씨 데이터 즉시 수신
-fetchWeather();
+
 
 document.getElementById('btn-detail-delete').addEventListener('click', () => {
     // 현재 화면에 떠 있는 게시글의 제목을 가져옵니다.
@@ -377,3 +376,36 @@ document.getElementById('btn-detail-delete').addEventListener('click', () => {
         location.reload();
     }
 });
+
+function initBaseCamp() {
+    console.log("🟢 관제탑 부팅 시퀀스 시작...");
+
+    try {
+        // 1. 외부 통신(날씨, 깃허브) 즉시 가동
+        if (typeof fetchWeather === 'function') fetchWeather();
+        if (typeof fetchGitHubStats === 'function') fetchGitHubStats();
+
+        // 2. 블랙박스에서 게시글 데이터 꺼내오기
+        const posts = JSON.parse(localStorage.getItem('jokers_posts') || '[]');
+
+        // 3. 지능형 검색 엔진(Fuse.js) 장전 (함수가 존재할 경우에만)
+        if (typeof initSearchEngine === 'function') {
+            initSearchEngine(posts);
+        }
+
+        // 4. 메인 화면에 게시글 카드 렌더링 (가장 중요!)
+        if (typeof renderDashboard === 'function') {
+            renderDashboard(); // 저장된 데이터를 바탕으로 화면을 그립니다.
+        } else {
+            console.error("⚠️ renderDashboard 함수를 찾을 수 없습니다!");
+        }
+
+        console.log("✅ 부팅 완료!");
+
+    } catch (error) {
+        console.error("🚨 부팅 중 치명적 에러 발생:", error);
+    }
+}
+
+// 브라우저가 HTML 뼈대를 다 읽으면, 즉시 부팅 엔진 가동!
+document.addEventListener('DOMContentLoaded', initBaseCamp);
